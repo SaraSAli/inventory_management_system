@@ -73,17 +73,9 @@ class _MedicineScreenState extends State<MedicineScreen> {
             child: ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (_, index) {
+                DocumentSnapshot document = snapshot.data!.docs[index];
                 return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => EditMedicineScreen(
-                              medicineId: snapshot.data!.docChanges[index].doc['id'],
-                                medicineName: snapshot.data!.docChanges[index].doc['name'],
-                                medicinePrice: snapshot.data!.docChanges[index].doc['price'],
-                                medicineQuantity: snapshot.data!.docChanges[index].doc['quantity'])));
-                  },
+                  onTap: () {},
                   child: Column(
                     children: [
                       SizedBox(
@@ -112,7 +104,36 @@ class _MedicineScreenState extends State<MedicineScreen> {
                               Text('Expiry Date: ${snapshot.data!.docChanges[index].doc['expiryDate'].toDate().toString()}'),
                             ],
                           ),
-                          trailing: Icon(Icons.edit),
+                          trailing: Container(
+                            width: 25,
+                            child: PopupMenuButton(
+                              onSelected: (dynamic value) {
+                                if (value == "Edit") {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => EditMedicineScreen(
+                                              medicineId: snapshot.data!.docChanges[index].doc['id'],
+                                              medicineName: snapshot.data!.docChanges[index].doc['name'],
+                                              medicinePrice: snapshot.data!.docChanges[index].doc['price'],
+                                              medicineQuantity: snapshot.data!.docChanges[index].doc['quantity'])));
+                                }
+                                if (value == "Delete")
+                                  document.reference.delete();
+                              },
+                              itemBuilder: (BuildContext context) =>
+                              <PopupMenuEntry<String>>[
+                                const PopupMenuItem<String>(
+                                  value: 'Edit',
+                                  child: Text('Edit'),
+                                ),
+                                const PopupMenuItem<String>(
+                                  value: 'Delete',
+                                  child: Text('Delete'),
+                                ),
+                              ],
+                            ),
+                          ),
                           contentPadding: EdgeInsets.symmetric(
                             vertical: 12,
                             horizontal: 16,

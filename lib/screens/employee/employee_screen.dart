@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 import 'add_employee_screen.dart';
 import 'edit_employee_screen.dart';
@@ -52,17 +51,9 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
             child: ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (_, index) {
+                DocumentSnapshot document = snapshot.data!.docs[index];
                 return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => EditEmployeeScreen(
-                                employeeId: snapshot.data!.docChanges[index].doc['nationalId'],
-                                employeeName: snapshot.data!.docChanges[index].doc['name'],
-                                employeeSalary: snapshot.data!.docChanges[index].doc['salary'],
-                                employeePhone: snapshot.data!.docChanges[index].doc['phone'])));
-                  },
+                  onTap: () {},
                   child: Column(
                     children: [
                       SizedBox(
@@ -86,12 +77,82 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Salary: \$${snapshot.data!.docChanges[index].doc['salary']}'),
-                              Text('Phone number: ${snapshot.data!.docChanges[index].doc['phone']}'),
-                              Text('National Id: ${snapshot.data!.docChanges[index].doc['nationalId']}'),
+                              Text(
+                                  'Salary: \$${snapshot.data!.docChanges[index].doc['salary']}'),
+                              Text(
+                                  'Phone number: ${snapshot.data!.docChanges[index].doc['phone']}'),
+                              Text(
+                                  'National Id: ${snapshot.data!.docChanges[index].doc['nationalId']}'),
                             ],
                           ),
-                          trailing: Icon(Icons.edit),
+                          trailing: Container(
+                            width: 25,
+                            child: PopupMenuButton(
+                              onSelected: (dynamic value) {
+                                if (value == "Edit") {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              EditEmployeeScreen(
+                                                  employeeId: snapshot
+                                                      .data!
+                                                      .docChanges[index]
+                                                      .doc['nationalId'],
+                                                  employeeName: snapshot
+                                                      .data!
+                                                      .docChanges[index]
+                                                      .doc['name'],
+                                                  employeeSalary: snapshot
+                                                      .data!
+                                                      .docChanges[index]
+                                                      .doc['salary'],
+                                                  employeePhone: snapshot
+                                                      .data!
+                                                      .docChanges[index]
+                                                      .doc['phone'])));
+                                }
+                                if (value == "Delete")
+                                  document.reference.delete();
+                                  /*showDialog(
+                                      context: context,
+                                      builder: (_) => AlertDialog(
+                                              title: Text('Delete Item',
+                                                  textAlign: TextAlign.center),
+                                              content: Text(
+                                                  'Are you sure you want to delete this item?'),
+                                              actions: [
+                                                TextButton(
+                                                    onPressed: () {
+                                                      FirebaseFirestore.instance.collection("employee")
+                                                          .doc(snapshot
+                                                          .data!
+                                                          .docChanges[index]
+                                                          .doc['nationalId']).delete();
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                    child: Text('YES')),
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: Text('NO')),
+                                              ]));*/
+                              },
+                              itemBuilder: (BuildContext context) =>
+                                  <PopupMenuEntry<String>>[
+                                const PopupMenuItem<String>(
+                                  value: 'Edit',
+                                  child: Text('Edit'),
+                                ),
+                                const PopupMenuItem<String>(
+                                  value: 'Delete',
+                                  child: Text('Delete'),
+                                ),
+                              ],
+                            ),
+                          ),
                           contentPadding: EdgeInsets.symmetric(
                             vertical: 12,
                             horizontal: 16,

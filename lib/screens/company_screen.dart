@@ -37,20 +37,11 @@ class CompanyScreen extends StatelessWidget {
             child: ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (_, index) {
+                DocumentSnapshot document = snapshot.data!.docs[index];
                 List medicinesList = snapshot.data!.docChanges[index].doc['medicine'];
                 print('Medicine: $medicinesList');
                 return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CompanyDetailsScreen(//name: snapshot.data!.docChanges[index].doc['name']
-                          name: snapshot.data!.docChanges[index].doc['name'],
-                          phone: snapshot.data!.docChanges[index].doc['phone'],
-                          list: medicinesList,),
-                      ),
-                    );
-                  },
+                  onTap: () {},
                   child: Column(
                     children: [
                       SizedBox(
@@ -62,15 +53,6 @@ class CompanyScreen extends StatelessWidget {
                           right: 3,
                         ),
                         child: ListTile(
-                          /*onTap: (){
-                            Navigator.push(
-                                context, MaterialPageRoute(builder: (context) => CompanyDetailsScreen(
-                              name: snapshot.data!.docChanges[index].doc['name'],
-                              phone: snapshot.data!.docChanges[index].doc['phone'],
-                              list: medicinesList,
-                            ))
-                            );
-                          },*/
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -86,7 +68,37 @@ class CompanyScreen extends StatelessWidget {
                               Text('Phone: \$${snapshot.data!.docChanges[index].doc['phone']}'),
                             ],
                           ),
-                          trailing: Icon(Icons.arrow_forward_ios),
+                          trailing: Container(
+                            width: 25,
+                            child: PopupMenuButton(
+                              onSelected: (dynamic value) {
+                                if (value == "Details") {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CompanyDetailsScreen(//name: snapshot.data!.docChanges[index].doc['name']
+                                        name: snapshot.data!.docChanges[index].doc['name'],
+                                        phone: snapshot.data!.docChanges[index].doc['phone'],
+                                        list: medicinesList,),
+                                    ),
+                                  );
+                                }
+                                if (value == "Delete")
+                                  document.reference.delete();
+                              },
+                              itemBuilder: (BuildContext context) =>
+                              <PopupMenuEntry<String>>[
+                                const PopupMenuItem<String>(
+                                  value: 'Details',
+                                  child: Text('Details'),
+                                ),
+                                const PopupMenuItem<String>(
+                                  value: 'Delete',
+                                  child: Text('Delete'),
+                                ),
+                              ],
+                            ),
+                          ),
                           contentPadding: EdgeInsets.symmetric(
                             vertical: 12,
                             horizontal: 16,
