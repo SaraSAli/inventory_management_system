@@ -15,6 +15,8 @@ class _AddMedicineScreenState extends State<AddMedicineScreen> {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  DateTime dateTime = DateTime(2023, 12, 24);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +25,7 @@ class _AddMedicineScreenState extends State<AddMedicineScreen> {
         title:
             Text('ADD MEDICINE', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,6 +64,16 @@ class _AddMedicineScreenState extends State<AddMedicineScreen> {
               ),
             ),
             SizedBox(height: 16),
+            ElevatedButton(
+                onPressed: () async{
+                  final date = await pickDate();
+                  if (date == null) return;
+                  setState(() => dateTime = date);
+                },
+                //child: Text('${dateTime.year}/${dateTime.month}/${dateTime.day}'),
+              child: Text('Pick Expiry date'),
+            ),
+            SizedBox(height: 16),
 
             // Button to save data to Firestore
             ElevatedButton(
@@ -74,6 +86,8 @@ class _AddMedicineScreenState extends State<AddMedicineScreen> {
     );
   }
 
+
+  Future<DateTime?> pickDate()=> showDatePicker(context: context, initialDate: dateTime, firstDate: DateTime(2023), lastDate: DateTime(2035));
   // Function to save data to Firestore
   void _saveData() {
     // Get the input values from the text editing controllers
@@ -82,12 +96,14 @@ class _AddMedicineScreenState extends State<AddMedicineScreen> {
     String price = _priceController.text.trim();
     String id = _idController.text.trim();
 
+    Timestamp timestamp = Timestamp.fromDate(dateTime);
+
     // Create a new document in the 'companies' collection with the input values
     _firestore.collection('medicine').doc(id).set({
       'name': name,
       'quantity': quantity,
       'price': price,
-      'expiryDate': DateTime.now(),
+      'expiryDate': timestamp,
     });
 
     // Clear the input fields

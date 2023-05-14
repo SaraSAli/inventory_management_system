@@ -1,9 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:inventory_management_system/screens/company_screen.dart';
+import 'package:inventory_management_system/screens/company/search_company_screen.dart';
+import 'package:inventory_management_system/screens/employee/search_employee_screen.dart';
+import 'package:inventory_management_system/screens/medicine/search_medicine_screen.dart';
 
-import 'screens/medicine/medicine_screen.dart';
-import 'screens/employee/employee_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,9 +33,9 @@ class _BottomNavigationState extends State<BottomNavigation> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    MedicineScreen(),
-    CompanyScreen(),
-    EmployeeScreen(),
+    SearchMedicineScreen(),
+    SearchCompanyScreen(),
+    SearchEmployeeScreen(),
   ];
 
   void _onItemTapped(int index) {

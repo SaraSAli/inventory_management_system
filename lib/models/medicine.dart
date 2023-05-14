@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Medicine {
@@ -12,4 +13,17 @@ class Medicine {
     required this.quantity,
     required this.expiryDate,
   });
+
+  List<Medicine> dataListFromSnapshot(QuerySnapshot querySnapshot) {
+    return querySnapshot.docs.map((snapshot) {
+      final Map<String, dynamic> dataMap =
+      snapshot.data() as Map<String, dynamic>;
+
+      return Medicine(
+          name: dataMap['name'],
+          price: dataMap['price'],
+          quantity: dataMap['quantity'],
+          expiryDate: dataMap['expiryDate']);
+    }).toList();
+  }
 }
